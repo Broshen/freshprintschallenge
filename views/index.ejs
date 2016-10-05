@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script src="http://fabricjs.com/build/files/text,gestures,easing,parser,freedrawing,interaction,serialization,image_filters,gradient,pattern,shadow,node.min.js"></script>
+    <script src="/javascripts/angularApp.js"></script>
+  	<link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body ng-app="fp" ng-controller="MainCtrl">
+ 	<div class="row">
+ 		<div class="col col-sm-4">
+ 			<button class="btn" onclick="undo()">Undo</button>
+ 			<button class="btn" onclick="redo()">Redo</button>
+ 			<br>
+ 			<br>
+ 			Edit History:
+ 			<div id="edit-history">
+ 				Undo:
+ 				<div class="col col-sm-2" id="undo">
+ 				</div>
+ 				Redo:
+ 				<div class="col col-sm-2" id="redo">
+ 				</div>
+ 			</div>
+ 		</div>
+
+ 		<div class="col col-sm-8">
+ 			<canvas id="c"></canvas>
+ 		</div>
+ 	</div>
+ 	<br>
+ 	<div class="row">
+ 		<div class="col col-sm-4">
+ 			Add Image:
+ 			<br>
+			<input id="upload" type="file" accept="image/*"> 		
+ 		</div>
+ 		<div class="col col-sm-4">
+ 			Add Text:
+ 			<br>
+ 			<textarea id="addInput"></textarea>	
+ 			<br>
+ 			<button class="btn" onclick="addtext()">Add Text</button>
+ 			<br>
+ 			Edit Text:	
+ 			<br>
+ 			<textarea id="editInput"></textarea>	
+ 			<br>	
+ 		</div>
+ 		<div class="col col-sm-4">
+ 			Delete selected
+ 			<br>
+ 			<button class="btn" onclick="removeCanvasObject()">Delete</button>	
+ 		</div>
+
+ 	</div>
+
+    <script src="/javascripts/fabricFunctions.js"></script>
+  </body>
+</html>
