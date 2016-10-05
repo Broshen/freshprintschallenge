@@ -11,3 +11,12 @@ a {
 	border: 1px solid;
 }
 
+textarea{
+	width: 100%;
+	resize: none;
+}
+
+#edit-history{
+	max-height:50vh;
+	overflow-y: auto;
+}
