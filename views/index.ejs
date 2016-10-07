@@ -46,11 +46,13 @@
  	<br>
  	<div class="row">
  		<div class="col col-sm-4">
- 			Add Image:
  			<br>
- 			<form id="uploadForm" enctype="multipart/form-data" action="/" method="post">
-				<input id="upload" type="file" accept="image/*" name="userFile"/> 	
-			</form>	
+ 			<label class="btn btn-default">
+ 				Upload Image
+	 			<form id="uploadForm" enctype="multipart/form-data" action="/" method="post" style="display:none;">
+					<input id="upload" type="file" accept="image/*" name="userFile"/> 	
+				</form>	
+			</label>
  		</div>
  		<div class="col col-sm-4">
  			Add Text:

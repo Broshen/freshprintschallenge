@@ -17,12 +17,13 @@ app.controller('MainCtrl', function($scope){
 	//for keeping track of canvas text edits
 	$scope.canvasText;
 
-	//for keeping track of 
+	var isMoved=false, isScaled=false, isRotated=false;
 
 
 	//initialize listeners for editing text
 	$scope.canvas.on('object:selected', function(e){
 
+		$scope.canvasObj=e.target;
 		$('#editInput').off();
 
 		if(e.target.type == "text"){
@@ -63,9 +64,35 @@ app.controller('MainCtrl', function($scope){
 		$('#editInput').off();
 	});
 
+	$scope.canvas.on('object:moving', function(e){
+		isMoved=true;
+	});
+
+	$scope.canvas.on('object:scaling', function(e){
+		isScaled=true;
+	});
+
+	$scope.canvas.on('object:rotating', function(e){
+		isRotated=true;
+	});
+
 	$scope.canvas.on('object:modified', function(e){
-		console.log("object was modified");
-		console.log(e);
+
+		if(isMoved){
+			saveState(e.target.type + " was moved");
+			$scope.$apply();
+			isMoved=false;
+		}
+		if(isScaled){
+			saveState(e.target.type + " was scaled");
+			$scope.$apply();
+			isScaled=false;
+		}
+		if(isRotated){
+			saveState(e.target.type + " was rotated");
+			$scope.$apply();
+			isRotated=false;
+		}
 	})
 
 
