@@ -1,5 +1,5 @@
 var app = angular.module('fp', []);
-var debug1, debug2, debug3;
+var debug=[];
 
 app.controller('MainCtrl', function($scope){
 
@@ -17,14 +17,11 @@ app.controller('MainCtrl', function($scope){
 	//for keeping track of canvas text edits
 	$scope.canvasText;
 
-	debug3 = $scope.canvas;
-
 	//for keeping track of 
 
 
 	//initialize listeners for editing text
 	$scope.canvas.on('object:selected', function(e){
-		debug1 =e;
 
 		$('#editInput').off();
 
@@ -75,45 +72,30 @@ app.controller('MainCtrl', function($scope){
 	$("#upload").change(function(e){addImage(e)});
 
 	var addImage = function(e) {
+		console.log("File is uploading...");
+        $('#uploadForm').ajaxSubmit({
 
+            error: function(xhr) {
+        	console.log('Error: ' + xhr.status);
+            },
 
-	    for (var i = 0; i < e.originalEvent.srcElement.files.length; i++) {
-	        
-	        var file = e.originalEvent.srcElement.files[i];
-	        
-	        var img = document.createElement("img");
-	        var imgId = "image"+$scope.imageIndex;
-	        $scope.imageIndex++;
+            success: function(response) {
+                console.log(response);
+                debug[0]=response;
+                data = JSON.parse(response);
+                imgURL = data.path;
+                fabric.Image.fromURL(imgURL,function(oImg){
+					oImg.scaleToWidth(200);
+					$scope.canvas.add(oImg);	  
+					saveState("Added Image");
+					$scope.$apply();
+					console.log("applied");
+				});		
 
-	        img.setAttribute("id", imgId);
-	        //img.setAttribute("style", "display:none");
-
-	        var reader = new FileReader();
-	        reader.onloadend = function() {
-	        	//set the image source
-	             img.src = reader.result;
-
-	             //find the image element
-	             var imgElement = $('#'+imgId)[0];
-
-
-	            //add the image to the canvas
-				var imgInstance = new fabric.Image(imgElement,{
-					left: 100,
-					top: 100,
-				});
-				imgInstance.scaleToWidth(200);
-				$scope.canvas.add(imgInstance);
-	    		saveState("Added Image");
-	    		$scope.$apply();
-	    		console.log("applied");
-	        }
-
-	        reader.readAsDataURL(file);
-
-	        $("#upload").after(img);			
-	    }
-
+            }
+	    });
+	    //disables page refresh.
+	    return false;
 	}
 
 	this.addtext = function (){
@@ -151,13 +133,8 @@ app.controller('MainCtrl', function($scope){
 		//removes the object from the canvas
 		$scope.canvas.remove(CanvasObj);
 
-		//when deleting images, need to remove the original image element
 		if(CanvasObj.type == "image"){
 			saveState("Deleted image");
-			var ObjOriginalId = CanvasObj._element.id;
-
-			//removes the original image element
-			$("#"+ObjOriginalId).remove();
 		}
 		else{
 			saveState("Deleted Text");

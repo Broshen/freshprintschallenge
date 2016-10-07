@@ -5,27 +5,16 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
-var routes = require('./routes/index');
-var users = require('./routes/users');
+//var routes = require('./routes/index');
+var database = require('./routes/database');
+var uploads = require('./routes/uploads');
+
+var multer = require('multer');
+var upload = multer({ dest: 'uploads' })
+
 
 var app = express();
 
-var mysql      = require('mysql');
-var connection = mysql.createConnection({
-  host     : 'sql9.freesqldatabase.com',
-  user     : 'sql9138818',
-  password : 'dL9GUNmHcB',
-  database : 'sql9138818'
-});
-
-connection.connect(function(err) {
-  if (err) {
-    console.error('mysql error connecting: ' + err.stack);
-    return;
-  }
-
- console.log('connected as id ' + connection.threadId);
-});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -38,40 +27,17 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+//app.use('/', routes);
+//app.use('/users', users);
 
-app.use('/', routes);
-app.use('/users', users);
-
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
+app.get('/', function(req, res, next) {
+  res.render('index', { title: 'Fresh Prints Challenge' });
 });
 
-// error handlers
-
-// development error handler
-// will print stacktrace
-if (app.get('env') === 'development') {
-  app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    res.render('error', {
-      message: err.message,
-      error: err
-    });
-  });
-}
-
-// production error handler
-// no stacktraces leaked to user
-app.use(function(err, req, res, next) {
-  res.status(err.status || 500);
-  res.render('error', {
-    message: err.message,
-    error: {}
-  });
+app.post('/', upload.single('userFile'), function(req,res){
+  console.log(req.file);
+  res.end(JSON.stringify(req.file));
 });
-
 
 module.exports = app;

@@ -4,6 +4,7 @@
     <title><%= title %></title>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+     <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery.form/3.51/jquery.form.min.js"></script>
     <script src="http://fabricjs.com/build/files/text,gestures,easing,parser,freedrawing,interaction,serialization,image_filters,gradient,pattern,shadow,node.min.js"></script>
   	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -47,7 +48,9 @@
  		<div class="col col-sm-4">
  			Add Image:
  			<br>
-			<input id="upload" type="file" accept="image/*"> 		
+ 			<form id="uploadForm" enctype="multipart/form-data" action="/" method="post">
+				<input id="upload" type="file" accept="image/*" name="userFile"/> 	
+			</form>	
  		</div>
  		<div class="col col-sm-4">
  			Add Text:
