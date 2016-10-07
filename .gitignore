@@ -12,5 +12,4 @@ logs
 results
 
 node_modules
-uploads/*
 npm-debug.log
