@@ -44,7 +44,6 @@ app.controller('MainCtrl', function($scope){
 			$('#editInput').val($scope.canvasText);
 
 			$('#editInput').on('input', function(){
-				console.log('input');
 				e.target.text=$('#editInput').val();
 				$scope.canvas.renderAll();
 			});
@@ -53,8 +52,6 @@ app.controller('MainCtrl', function($scope){
 	});
 
 	$scope.canvas.on('before:selection:cleared', function(e){
-
-		console.log("before deselect");
 
 		if(e.target.type== "text"){
 
@@ -72,8 +69,6 @@ app.controller('MainCtrl', function($scope){
 	})
 
 	$scope.canvas.on('selection:cleared', function(e){
-		console.log("deselected");
-
 		//clears the textarea for the edit text box
 		$('#editInput').val('');
 		$('#editInput').off();
@@ -114,7 +109,6 @@ app.controller('MainCtrl', function($scope){
 	$("#upload").change(function(e){addImage(e)});
 
 	var addImage = function(e) {
-		console.log("File is uploading...");
         $('#uploadForm').ajaxSubmit({
 
             error: function(xhr) {
@@ -122,7 +116,6 @@ app.controller('MainCtrl', function($scope){
             },
 
             success: function(response) {
-                console.log(response);
                 debug[0]=response;
                 data = JSON.parse(response);
                 imgURL = data.path;
@@ -131,7 +124,6 @@ app.controller('MainCtrl', function($scope){
 					$scope.canvas.add(oImg);	  
 					saveState("Added Image");
 					$scope.$apply();
-					console.log("applied");
 				});		
 
             }
@@ -159,12 +151,10 @@ app.controller('MainCtrl', function($scope){
 			removeGroup(canvasObject);
 		}
 		else if (canvasObject = $scope.canvas.getActiveObject()){
-			console.log('case2');
 			removeSingleObject(canvasObject);
 		}
 		else{
 			//TODO - display error message
-			console.log('case3');
 		}
 	}
 
@@ -213,7 +203,6 @@ app.controller('MainCtrl', function($scope){
 	}
 	
 	var saveState = function(history){
-		console.log("triggered");
 		var state = $scope.canvas.toDatalessJSON();
 		$scope.undoHistory.push([history, state]);
 		$scope.redoHistory = [];
@@ -264,7 +253,6 @@ app.controller('MainCtrl', function($scope){
 
 					if(data.data.length != 0){
 						debug[1]=data.data;
-						console.log(data)
 						var stateJSON = JSON.parse(data.data[0].Design);
 						$scope.canvas.loadFromDatalessJSON(stateJSON, function(){ 
 							$scope.canvas.renderAll(); 
@@ -278,7 +266,6 @@ app.controller('MainCtrl', function($scope){
 				}
 
 				$('#loadMsg').fadeIn().delay(1000).fadeOut();
-				console.log(data);
 			}, 'json');
 		}
 		
