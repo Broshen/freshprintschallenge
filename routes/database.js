@@ -1,10 +1,12 @@
 var express = require('express');
+var mysql = require('mysql');
 var router = express.Router();
 
-var mysql = require('mysql');
+// Queries to select and insert from database
 var selectQuery = "SELECT * FROM `freshprintsdesigns` WHERE `Email`= ? AND	`DesignName`= ?";
 var insertQuery = "INSERT INTO `freshprintsdesigns`(`Email`, `DesignName`, `Design`) VALUES (?,?,?)";
 
+//connect to database
 var connection = mysql.createConnection({
 	host     : 'sql9.freesqldatabase.com',
 	user     : 'sql9138818',
@@ -20,7 +22,7 @@ connection.connect(function(err) {
 	console.log('connected as id ' + connection.threadId);
 });
 
-
+//endpoint for saving a design to database
 router.post('/save', function(req, res, next) {
 	var email = req.body.email;
 	var designName = req.body.name;
@@ -29,10 +31,12 @@ router.post('/save', function(req, res, next) {
 	var insertArr = [email, designName, canvas];
 	var msg;
 
-
+	//first check if a design with the same name under the same user has already been saved
 	connection.query(selectQuery, selectArr, function(err, rows, fields) {
 		if (err) throw err;
 
+		//if not, save the design, otherwise, inform them that design already exists
+		//currently no way to overload and save over previous design
 		if(rows.length==0){
 			connection.query(insertQuery, insertArr, function(err,results){
 				if (err) throw err;
@@ -49,13 +53,9 @@ router.post('/save', function(req, res, next) {
 			res.end("");
 		}
 	});
-
-
-
-
-	
 });
 
+//endpoint for loading a previously saved design
 router.post('/load', function(req, res, next){
 	var email = req.body.email;
 	var designName = req.body.name;	
