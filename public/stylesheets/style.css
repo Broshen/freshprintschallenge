@@ -1,22 +1,28 @@
-body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-}
-
-a {
-  color: #00B7FF;
+.navbar-brand{
+	color: white !important;
 }
 
 .canvas-container{
 	border: 1px solid;
+    margin: 0 auto;
+    margin-top: 100px;
 }
 
-textarea{
-	width: 100%;
-	resize: none;
+.canvas{
+	height: 700px;
+	overflow-y: hidden;
+    background-image: url("/images/white.jpg");
+    background-position: center;
+    background-size: 700px, 800px;
+    background-repeat: no-repeat;
+    margin: 0 auto;
 }
 
-#edit-history{
-	max-height:50vh;
-	overflow-y: auto;
+.borderless td, .borderless th {
+    border: none !important;
+}
+
+.navbar-btn{
+	margin-left: 5px;
+	margin-right: 5px;
 }

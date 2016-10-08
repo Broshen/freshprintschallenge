@@ -28,6 +28,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/database', database);
 //app.use('/', routes);
 //app.use('/users', users);
 
@@ -39,5 +40,5 @@ app.post('/', upload.single('userFile'), function(req,res){
   console.log(req.file);
   res.end(JSON.stringify(req.file));
 });
-
+  
 module.exports = app;

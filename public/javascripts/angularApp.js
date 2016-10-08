@@ -6,7 +6,7 @@ app.controller('MainCtrl', function($scope){
 
 	//initialize canvas
 	$scope.canvas = new fabric.Canvas('c');
-	$scope.canvas.setDimensions({width: 600, height: 400});
+	$scope.canvas.setDimensions({width: 300, height: 450});
 
 	$scope.imageIndex = 0; //for keeping track of adding and removing images
 
@@ -16,6 +16,14 @@ app.controller('MainCtrl', function($scope){
 
 	//for keeping track of canvas text edits
 	$scope.canvasText;
+
+	$scope.saveEmail = "";
+	$scope.saveName = "";
+	$scope.saveResult = "";
+
+	$scope.loadEmail = "";
+	$scope.loadName = "";
+	$scope.loadResult = "";
 
 	var isMoved=false, isScaled=false, isRotated=false;
 
@@ -27,7 +35,10 @@ app.controller('MainCtrl', function($scope){
 		$('#editInput').off();
 
 		if(e.target.type == "text"){
-			console.log("selected");
+
+			$('#addtext').hide();
+			$('#edittext').show();
+
 			$scope.canvasText = e.target.text;
 
 			$('#editInput').val($scope.canvasText);
@@ -46,12 +57,16 @@ app.controller('MainCtrl', function($scope){
 		console.log("before deselect");
 
 		if(e.target.type== "text"){
+
+			$('#addtext').show();
+			$('#edittext').hide();
+
 			if($('#editInput').val()==''){
 				removeCanvasObject();
 			}
 			else if($scope.canvasText != $('#editInput').val()){
 				saveState("Edited Text");
-	    		$scope.$apply();
+				$scope.$apply();
 			}
 		}
 	})
@@ -84,7 +99,7 @@ app.controller('MainCtrl', function($scope){
 			isMoved=false;
 		}
 		if(isScaled){
-			saveState(e.target.type + " was scaled");
+			saveState(e.target.type + " was scaled")
 			$scope.$apply();
 			isScaled=false;
 		}
@@ -212,10 +227,60 @@ app.controller('MainCtrl', function($scope){
 	}
 
 	this.saveCanvas = function(){
+		if($scope.saveEmail=="" || $scope.saveName=="" ){
+			$scope.saveResult="Please fill out all fields!";
+			$('#saveMsg').fadeIn().delay(1000).fadeOut();
+		}
+		else{
 
+			var state = JSON.stringify($scope.canvas.toDatalessJSON());
+
+			$.post('/database/save', {email: $scope.saveEmail, name: $scope.saveName, canvas: state}, function(data, status, xhr){
+				if(status=="success"){
+					$scope.saveResult=data.status;
+				}
+				else{
+					$scope.saveResult="An error occurred!";
+				}
+
+				$('#saveMsg').fadeIn().delay(1000).fadeOut();
+			}, 'json');
+		}
 	}
 
 	this.loadCanvas = function(){
+		if($scope.loadEmail=="" || $scope.loadName=="" ){
+			$scope.loadResult="Please fill out all fields!";
+			$('#loadMsg').fadeIn().delay(1000).fadeOut();
+		}
+
+		else{
+			$scope.loadResult="";
+
+			$.post('/database/load', {email: $scope.loadEmail, name: $scope.loadName}, function(data, status, xhr){
+				if(status=="success"){
+
+					$scope.loadResult=data.status;
+
+					if(data.data.length != 0){
+						debug[1]=data.data;
+						console.log(data)
+						var stateJSON = JSON.parse(data.data[0].Design);
+						$scope.canvas.loadFromDatalessJSON(stateJSON, function(){ 
+							$scope.canvas.renderAll(); 
+							saveState("Loaded a saved design");
+							$scope.$apply();
+						});
+					}
+				}
+				else{
+					$scope.loadResult="An error occurred!";
+				}
+
+				$('#loadMsg').fadeIn().delay(1000).fadeOut();
+				console.log(data);
+			}, 'json');
+		}
 		
 	}
 });

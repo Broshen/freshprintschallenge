@@ -9,70 +9,98 @@
   	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel='stylesheet' href='/stylesheets/sidebar.css' />
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
   </head>
   <body ng-app="fp" ng-controller="MainCtrl as main">
- 	<div class="row">
- 		<div class="col col-sm-4">
- 			<button class="btn" ng-click="main.undo()">Undo</button>
- 			<button class="btn" ng-click="main.redo()">Redo</button>
- 			<button class="btn" data-toggle="modal" data-target="#saveModal">Save</button>
- 			<button class="btn" data-toggle="modal" data-target="#loadModal">Load</button>
- 			<br>
- 			<br>
- 			Edit History:
- 			<div id="edit-history">
- 				<br>
- 				<div class="col col-sm-3" id="undo">
- 					Undo History:
- 					<table class="table">
 
- 						<tr ng-repeat="undo in undoHistory | orderBy:'id':true"><td>{{undo[0]}}</td></tr>
- 					</table>
- 				</div>
- 				
- 				<div class="col col-sm-3" id="redo">
- 					Redo History:
- 					<table class="table">
- 						<tr ng-repeat="redo in redoHistory | orderBy:'id':true"><td>{{redo[0]}}<td></tr>
- 					</table>
- 				</div>
+  	<nav class="navbar navbar-inverse navbar-fixed-top">
+	  <div class="container-fluid">
+
+	    <div class="navbar-header">
+	      <a class="navbar-brand">Fresh Prints Design Challenge</a>
+	    </div>
+
+
+	    <ul class="nav navbar-nav navbar-right">
+	 	  <li><button class="btn navbar-btn" data-toggle="modal" data-target="#saveModal">Save Design</button></li>
+
+	 	  <li><button class="btn navbar-btn" data-toggle="modal" data-target="#loadModal">Load a Design</button></li>
+	    </ul>
+	  </div>
+	</nav>
+
+
+	<div class="sidenav">
+			<ul class="pager">
+			  <li ng-click="main.undo()"><a>Undo</a></li>
+			  <li ng-click="main.redo()"><a>Redo</a></li>
+			  <li data-toggle="collapse" data-target="#history"><a>See History</a></li>
+			</ul>
+
+			<div class="collapse" id="history">
+				<ul class="nav nav-tabs sidenav-tabs">
+				  <li class="active"><a data-toggle="tab" href="#undo">Undo History</a></li>
+				  <li ><a data-toggle="tab" href="#redo">Redo History</a></li>
+				</ul>
+
+				<div id="edit-history" class="tab-content">
+						<div class="tab-pane fade in active" id="undo">
+							<table class="table borderless">
+
+								<tr ng-repeat="undo in undoHistory | orderBy:'id':true"><td>{{undo[0]}}</td></tr>
+							</table>
+						</div>
+						
+						<div class="tab-pane fade" id="redo">
+							<table class="table borderless">
+								<tr ng-repeat="redo in redoHistory | orderBy:'id':true"><td>{{redo[0]}}<td></tr>
+							</table>
+						</div>
+				</div>
+			</div>
+
+			<div class="row" id="uploadrow">
+				<h4>Upload an Image: </h4>
+		 			<label class="btn btn-success">
+		 				Upload
+			 			<form id="uploadForm" enctype="multipart/form-data" action="/" method="post" style="display:none;">
+							<input id="upload" type="file" accept="image/*" name="userFile"/> 	
+						</form>	
+					</label>
+			</div>
+
+			<div class="row" id="textrow">
+	 			<div id="addtext">
+		 			<h4>Add Text:</h4>
+		 			
+		 			<input type="text" class="form-control" rows="1" id="addInput"/>	
+		 			<br>
+		 			<button class="btn btn-primary" ng-click="main.addtext()">Add Text</button>
+		 			<br>
+		 		</div>
+		 		<div id="edittext" style="display:none;">
+	 				<h4>Edit Text:</h4>
+		 			<input type="text" class="form-control" rows="1" id="editInput"/>
+	 				<br>	
+				</div>
+		 	</div>
+
+	 	
+
+		 	<div class="row" id="deleterow">
+ 				<h4> Delete Selected: </h4>
+ 				<button class="btn btn-danger" ng-click="main.removeCanvasObject()">Delete</button>	
  			</div>
- 		</div>
+	</div>
 
- 		<div class="col col-sm-6">
- 			<canvas id="c"></canvas>
- 		</div>
- 	</div>
- 	<br>
- 	<div class="row">
- 		<div class="col col-sm-4">
- 			<br>
- 			<label class="btn btn-default">
- 				Upload Image
-	 			<form id="uploadForm" enctype="multipart/form-data" action="/" method="post" style="display:none;">
-					<input id="upload" type="file" accept="image/*" name="userFile"/> 	
-				</form>	
-			</label>
- 		</div>
- 		<div class="col col-sm-4">
- 			Add Text:
- 			<br>
- 			<textarea class="form-control" rows="1" id="addInput"></textarea>	
- 			<br>
- 			<button class="btn" ng-click="main.addtext()">Add Text</button>
- 			<br>
- 			Edit Text:	
- 			<br>
- 			<textarea class="form-control" rows="1" id="editInput"></textarea>	
- 			<br>	
- 		</div>
- 		<div class="col col-sm-4">
- 			Delete selected
- 			<br>
- 			<button class="btn" ng-click="main.removeCanvasObject()">Delete</button>	
- 		</div>
-
- 	</div>
+	<div class="body">
+		<div class="row">
+			<div class="canvas">
+				<canvas id="c"></canvas>
+			</div>
+		</div>
+	</div>
 
  	<div id="saveModal" class="modal fade" role="dialog">
  		<div class="modal-dialog">
@@ -81,13 +109,23 @@
 	    <div class="modal-content">
 	      <div class="modal-header">
 	        <button type="button" class="close" data-dismiss="modal">&times;</button>
-	        <h4 class="modal-title">Modal Header</h4>
+	        <h4 class="modal-title">Save design:</h4>
 	      </div>
 	      <div class="modal-body">
-	        Save design:
+	        Enter your email and design name to save:
+
+	        <br>
+	        <br>
+	        <input id="saveEmail" name="saveEmail" ng-model="saveEmail" type="text" class="form-control" placeholder="Email:">
+	        <br>
+	        <input id="saveName" name="saveName" ng-model="saveName" type="text" class="form-control" placeholder="Design Name:">
+	        <br>
+
+	        <button type="button" class="btn btn-default" ng-click="main.saveCanvas()">Save</button>
 
 	      </div>
 	      <div class="modal-footer">
+			<span id="saveMsg" class="pull-left" style="display:none;">{{saveResult}}</span>
 	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 	      </div>
 	    </div>
@@ -102,12 +140,23 @@
 	    <div class="modal-content">
 	      <div class="modal-header">
 	        <button type="button" class="close" data-dismiss="modal">&times;</button>
-	        <h4 class="modal-title">Modal Header</h4>
+	        <h4 class="modal-title">Load a design:</h4>
 	      </div>
 	      <div class="modal-body">
-	        Load a design:
+	        Enter your email and the name of your design:
+
+	        <br>
+	        <br>
+	        <input id="loadEmail" name="loadEmail" ng-model="loadEmail" type="text" class="form-control" placeholder="Email:">
+	        <br>
+	        <input id="loadName" name="loadName" ng-model="loadName" type="text" class="form-control" placeholder="Design Name:">
+	        <br>
+
+	        <button type="button" class="btn btn-default" ng-click="main.loadCanvas()">Load</button>
 	      </div>
 	      <div class="modal-footer">
+
+			<span id="loadMsg" class="pull-left" style="display:none;">{{loadResult}}</span>
 	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 	      </div>
 	    </div>
