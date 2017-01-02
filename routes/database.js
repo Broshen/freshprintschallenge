@@ -7,20 +7,14 @@ var selectQuery = "SELECT * FROM `freshprintsdesigns` WHERE `Email`= ? AND	`Desi
 var insertQuery = "INSERT INTO `freshprintsdesigns`(`Email`, `DesignName`, `Design`) VALUES (?,?,?)";
 
 //connect to database
-var connection = mysql.createConnection({
-	host     : 'sql9.freesqldatabase.com',
-	user     : 'sql9138818',
-	password : 'dL9GUNmHcB',
-	database : 'sql9138818'
-});
+var config = {
+	host     : 'us-cdbr-iron-east-04.cleardb.net',
+	user     : 'be3a19940762f7',
+	password : 'fdf0a46a',
+	database : 'heroku_3c3f8da92d69a30'
+};
 
-connection.connect(function(err) {
-	if (err) {
-		console.error('mysql error connecting: ' + err.stack);
-		return;
-	}
-	console.log('connected as id ' + connection.threadId);
-});
+var connection;
 
 //endpoint for saving a design to database
 router.post('/save', function(req, res, next) {
@@ -80,5 +74,29 @@ router.post('/load', function(req, res, next){
 
 
 })
+
+//handle disconnects gracefully - source: http://stackoverflow.com/questions/20210522/nodejs-mysql-error-connection-lost-the-server-closed-the-connection
+function handleDisconnect() {
+  connection = mysql.createConnection(config); // Recreate the connection, since
+                                                  // the old one cannot be reused.
+
+  connection.connect(function(err) {              // The server is either down
+    if(err) {                                     // or restarting (takes a while sometimes).
+      console.log('error when connecting to db:', err);
+      setTimeout(handleDisconnect, 2000); // We introduce a delay before attempting to reconnect,
+    }                                     // to avoid a hot loop, and to allow our node script to
+  });                                     // process asynchronous requests in the meantime.
+                                          // If you're also serving http, display a 503 error.
+  connection.on('error', function(err) {
+    console.log('db error', err);
+    if(err.code === 'PROTOCOL_CONNECTION_LOST') { // Connection to the MySQL server is usually
+      handleDisconnect();                         // lost due to either server restart, or a
+    } else {                                      // connnection idle timeout (the wait_timeout
+      throw err;                                  // server variable configures this)
+    }
+  });
+}
+
+handleDisconnect();
 
 module.exports = router;
